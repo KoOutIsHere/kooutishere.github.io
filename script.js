@@ -1,6 +1,6 @@
-document.getElementById('addressinput').addEventListener('input', async function() {
+document.getElementById('address').addEventListener('input', async function() {
     const query = this.value;
-    if (query.length < 4) {
+    if (query.length < 3) {
         document.getElementById('suggestions').innerHTML = '';
         return;
     }

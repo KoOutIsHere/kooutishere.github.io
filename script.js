@@ -9,6 +9,9 @@ document.getElementById('address').addEventListener('input', async function() {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=HK&q=${query}`);
         const suggestions = await response.json();
 
+        // Debugging: Log the response to check if it contains results
+        console.log('API response:', suggestions);
+
         if (suggestions.length === 0) {
             document.getElementById('suggestions').innerHTML = '<div>No results found</div>';
         } else {

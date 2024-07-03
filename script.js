@@ -6,7 +6,7 @@ document.getElementById('address').addEventListener('input', async function() {
     }
 
     try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=HK&q=${query}`);
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${query}`);
         const suggestions = await response.json();
 
         // Debugging: Log the response to check if it contains results

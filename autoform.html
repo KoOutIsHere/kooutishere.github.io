@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Form Testing</title>
+    <style>
+        /* Basic styles for the autocomplete suggestions */
+        .autocomplete-suggestions {
+            border: 1px solid #e4e4e4;
+            max-height: 150px;
+            overflow-y: auto;
+            background: #fff;
+        }
+        .autocomplete-suggestion {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-suggestion:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>E-Form Testing</h1>
+    <form id="e-form">
+        <label for="first-name">First Name:</label>
+        <input type="text" id="first-name" name="first-name" required><br><br>
+
+        <label for="last-name">Last Name:</label>
+        <input type="text" id="last-name" name="last-name" required><br><br>
+
+        <label for="mobile-number">Mobile Number:</label>
+        <input type="tel" id="mobile-number" name="mobile-number" pattern="[0-9]{10}" required><br><br>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required autocomplete="off"><br><br>
+        <div id="autocomplete-suggestions" class="autocomplete-suggestions"></div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('e-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const mobileNumber = document.getElementById('mobile-number').value;
+            const address = document.getElementById('address').value;
+
+            alert(`Form submitted successfully!\n\nFirst Name: ${firstName}\nLast Name: ${lastName}\nMobile Number: ${mobileNumber}\nAddress: ${address}`);
+        });
+
+        document.getElementById('address').addEventListener('input', function() {
+            const query = this.value;
+            if (query.length < 3) {
+                document.getElementById('autocomplete-suggestions').innerHTML = '';
+                return;
+            }
+
+            fetch(`https://photon.komoot.io/api/?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const suggestions = data.features.map(feature => feature.properties.name + ', ' + feature.properties.city + ', ' + feature.properties.country);
+                    const suggestionsContainer = document.getElementById('autocomplete-suggestions');
+                    suggestionsContainer.innerHTML = '';
+
+                    suggestions.forEach(suggestion => {
+                        const div = document.createElement('div');
+                        div.className = 'autocomplete-suggestion';
+                        div.textContent = suggestion;
+                        div.addEventListener('click', function() {
+                            document.getElementById('address').value = suggestion;
+                            suggestionsContainer.innerHTML = '';
+                        });
+                        suggestionsContainer.appendChild(div);
+                    });
+                });
+        });
+    </script>
+</body>
+</html>

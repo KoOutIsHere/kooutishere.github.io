@@ -19,6 +19,12 @@
             list-style-type: none;
             padding: 0;
             margin-top: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            position: absolute;
+            background-color: white;
+            z-index: 9999;
+            display: none;
         }
         #address_suggestions li {
             background-color: #f9f9f9;
@@ -44,19 +50,22 @@
     <ul id="address_suggestions"></ul>
 
     <!-- Google Places API script -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANNfV-sXMse9k8kS_eA9SXWKPtatZSkrc&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places"></script>
 
     <script>
+        let autocomplete;
+        let suggestionsList = document.getElementById('address_suggestions');
+
+        // Initialize Google Places Autocomplete
         function initAutocomplete() {
             const input = document.getElementById('address_input');
-            const autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete = new google.maps.places.Autocomplete(input, {
+                types: ['geocode']  // This restricts to address search only
+            });
 
-            autocomplete.setFields(['address_components', 'formatted_address']);
-
-            // Handle place selection
-            autocomplete.addListener('place_changed', function() {
+            autocomplete.addListener('place_changed', function () {
                 const place = autocomplete.getPlace();
-                
+
                 if (!place.geometry) {
                     console.error("No details available for input: '" + place.name + "'");
                     return;
@@ -64,33 +73,54 @@
 
                 // Populate the input field with the formatted address
                 document.getElementById('address_input').value = place.formatted_address;
-
-                // Optionally, process the address components
-                fillAddressFields(place.address_components);
+                hideSuggestions();
             });
-        }
 
-        function fillAddressFields(addressComponents) {
-            addressComponents.forEach(component => {
-                if (component.types.includes('street_number')) {
-                    console.log('Street Number:', component.long_name);
-                }
-                if (component.types.includes('route')) {
-                    console.log('Street Name:', component.long_name);
-                }
-                if (component.types.includes('locality')) {
-                    console.log('City:', component.long_name);
-                }
-                if (component.types.includes('administrative_area_level_1')) {
-                    console.log('State:', component.long_name);
-                }
-                if (component.types.includes('postal_code')) {
-                    console.log('Postal Code:', component.long_name);
+            // Add listener for input change to show autocomplete suggestions manually
+            input.addEventListener('input', function() {
+                const query = input.value;
+
+                if (query.length > 2) {
+                    fetchSuggestions(query);
+                } else {
+                    hideSuggestions();
                 }
             });
         }
 
-        // Load the autocomplete functionality when the page loads
+        // Function to fetch suggestions manually using Google Places API
+        function fetchSuggestions(query) {
+            const service = new google.maps.places.AutocompleteService();
+            service.getPlacePredictions({ input: query }, displaySuggestions);
+        }
+
+        // Function to display suggestions in the list
+        function displaySuggestions(predictions, status) {
+            if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                return;
+            }
+
+            suggestionsList.innerHTML = '';  // Clear previous suggestions
+            predictions.forEach(function (prediction) {
+                const li = document.createElement('li');
+                li.textContent = prediction.description;
+                li.addEventListener('click', function () {
+                    document.getElementById('address_input').value = prediction.description;
+                    hideSuggestions();
+                });
+                suggestionsList.appendChild(li);
+            });
+
+            suggestionsList.style.display = 'block';
+        }
+
+        // Hide suggestions list
+        function hideSuggestions() {
+            suggestionsList.innerHTML = '';
+            suggestionsList.style.display = 'none';
+        }
+
+        // Load the autocomplete functionality when the page is ready
         google.maps.event.addDomListener(window, 'load', initAutocomplete);
     </script>
 

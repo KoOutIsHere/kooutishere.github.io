@@ -1,7 +1,98 @@
 <!DOCTYPE html>
-<html>
-<script src="googlemap.js"></script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Places Address Autocomplete Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #address_suggestions {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 5px;
+        }
+        #address_suggestions li {
+            background-color: #f9f9f9;
+            padding: 8px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            margin-top: 2px;
+        }
+        #address_suggestions li:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
 <body>
-  Hello World!
+
+    <h2>Address Autocomplete Test</h2>
+    <p>Start typing an address:</p>
+
+    <!-- Address input field -->
+    <input id="address_input" type="text" placeholder="Enter your address">
+
+    <!-- List for displaying address suggestions -->
+    <ul id="address_suggestions"></ul>
+
+    <!-- Google Places API script -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANNfV-sXMse9k8kS_eA9SXWKPtatZSkrc&libraries=places"></script>
+
+    <script>
+        function initAutocomplete() {
+            const input = document.getElementById('address_input');
+            const autocomplete = new google.maps.places.Autocomplete(input);
+
+            autocomplete.setFields(['address_components', 'formatted_address']);
+
+            // Handle place selection
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                
+                if (!place.geometry) {
+                    console.error("No details available for input: '" + place.name + "'");
+                    return;
+                }
+
+                // Populate the input field with the formatted address
+                document.getElementById('address_input').value = place.formatted_address;
+
+                // Optionally, process the address components
+                fillAddressFields(place.address_components);
+            });
+        }
+
+        function fillAddressFields(addressComponents) {
+            addressComponents.forEach(component => {
+                if (component.types.includes('street_number')) {
+                    console.log('Street Number:', component.long_name);
+                }
+                if (component.types.includes('route')) {
+                    console.log('Street Name:', component.long_name);
+                }
+                if (component.types.includes('locality')) {
+                    console.log('City:', component.long_name);
+                }
+                if (component.types.includes('administrative_area_level_1')) {
+                    console.log('State:', component.long_name);
+                }
+                if (component.types.includes('postal_code')) {
+                    console.log('Postal Code:', component.long_name);
+                }
+            });
+        }
+
+        // Load the autocomplete functionality when the page loads
+        google.maps.event.addDomListener(window, 'load', initAutocomplete);
+    </script>
+
 </body>
 </html>

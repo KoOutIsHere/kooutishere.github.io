@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Autocomplete - Hong Kong Focus</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQjEkcF3SE9TDHwENM_2bGaDTpVouUvBY&libraries=places&language=zh-TW" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Search Address in Hong Kong</h2>
+    <p>Enter a location to auto-fill the address details below:</p>
+
+    <!-- Search Input -->
+    <div class="form-group">
+        <label for="autocomplete">Search Address</label>
+        <input id="autocomplete" type="text" placeholder="Type address...">
+    </div>
+
+    <!-- Address Breakdown -->
+    <div class="form-group">
+        <label for="country">Country 國家</label>
+        <input id="country" type="text" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="region">Region 地區</label>
+        <input id="region" type="text" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="district">District 分區</label>
+        <input id="district" type="text" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="street">Street 街名</label>
+        <input id="street" type="text" readonly>
+    </div>
+    
+    <div class="form-group">
+        <label for="streetnum">Street Number 街號</label>
+        <input id="streetnum" type="text" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="building">Building 大廈</label>
+        <input id="building" type="text" readonly>
+    </div>
+
+    <script>
+        
+        // Initialize Google Places Autocomplete
+        function initAutocomplete() {
+            const input = document.getElementById('autocomplete');
+            const options = {
+                componentRestrictions: { country: "HK" }, // Restrict to Hong Kong
+                fields: ["address_components", "geometry"], // Get detailed components
+            };
+
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+            // Add listener for place selection
+            autocomplete.addListener("place_changed", function () {
+                const place = autocomplete.getPlace();
+                if (!place.address_components) {
+                    console.error("No address components found!");
+                    return;
+                }
+
+                // Clear all fields
+                document.getElementById("country").value = '';
+                document.getElementById("region").value = '';
+                document.getElementById("district").value = '';
+                document.getElementById("street").value = '';
+                document.getElementById("streetnum").value = '';
+                document.getElementById("building").value = '';
+
+                // Parse address components
+                place.address_components.forEach((component) => {
+                    const types = component.types;
+
+                    if (types.includes("country")) {
+                        document.getElementById("country").value = component.long_name;
+                    } else if (types.includes("administrative_area_level_1")) {
+                        document.getElementById("region").value = component.long_name; // E.g., Hong Kong Island
+                    } else if (types.includes("neighborhood")) {
+                        document.getElementById("district").value = component.long_name; // E.g., Central and Western District use "locality" for "route"
+                    } else if (types.includes("route")) {
+                        document.getElementById("street").value = component.long_name; // Alternate type for district
+                    } else if (types.includes("street_number")) {
+                        document.getElementById("streetnum").value = component.long_name; // E.g., Queen's Road Central
+                    } else if (types.includes("premise") || types.includes("subpremise")) {
+                        document.getElementById("building").value = component.long_name; // E.g., Building Name
+                    }
+                });
+            });
+        }
+
+        // Initialize when API script loads
+        window.onload = initAutocomplete;
+    </script>
+
+</body>
+</html>

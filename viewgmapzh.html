@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Places Components Viewer</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQjEkcF3SE9TDHwENM_2bGaDTpVouUvBY&libraries=places&language=zh-TW"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Places Components Viewer</h1>
+    <p>Type an address or location below to see all Google Places components:</p>
+    <input id="autocomplete" type="text" placeholder="Enter a location">
+    <table id="componentsTable">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Long Name</th>
+                <th>Short Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="3" style="text-align: center;">No data yet</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function initAutocomplete() {
+            const input = document.getElementById('autocomplete');
+            const autocomplete = new google.maps.places.Autocomplete(input, {
+                fields: ["address_components", "geometry", "name"],
+            });
+
+            autocomplete.addListener("place_changed", function () {
+                const place = autocomplete.getPlace();
+
+                if (!place.address_components) {
+                    console.error("No address components found!");
+                    alert("No address components available for this location.");
+                    return;
+                }
+
+                // Clear previous results
+                const tableBody = document.getElementById("componentsTable").querySelector("tbody");
+                tableBody.innerHTML = "";
+
+                // Populate table with address components
+                place.address_components.forEach((component) => {
+                    const row = document.createElement("tr");
+
+                    const typeCell = document.createElement("td");
+                    typeCell.textContent = component.types.join(", ");
+                    row.appendChild(typeCell);
+
+                    const longNameCell = document.createElement("td");
+                    longNameCell.textContent = component.long_name;
+                    row.appendChild(longNameCell);
+
+                    const shortNameCell = document.createElement("td");
+                    shortNameCell.textContent = component.short_name;
+                    row.appendChild(shortNameCell);
+
+                    tableBody.appendChild(row);
+                });
+            });
+        }
+
+        // Initialize the autocomplete after the script loads
+        window.onload = initAutocomplete;
+    </script>
+</body>
+</html>

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Address Breakdown Form</title>
+    <title>Google Autocomplete - Hong Kong Focus</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQjEkcF3SE9TDHwENM_2bGaDTpVouUvBY&libraries=places" defer></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,18 +27,24 @@
 </head>
 <body>
 
-    <h2>Search Hotel or Building Name</h2>
-    <p>Enter a hotel, building name, or address keyword to auto-fill the details below:</p>
+    <h2>Search Address in Hong Kong</h2>
+    <p>Enter a location to auto-fill the address details below:</p>
 
-    <!-- Form -->
+    <!-- Search Input -->
     <div class="form-group">
-        <label for="place_search">Search</label>
-        <input id="place_search" type="text" placeholder="Type to search...">
+        <label for="autocomplete">Search Address</label>
+        <input id="autocomplete" type="text" placeholder="Type address...">
+    </div>
+
+    <!-- Address Breakdown -->
+    <div class="form-group">
+        <label for="country">Country</label>
+        <input id="country" type="text" readonly>
     </div>
 
     <div class="form-group">
-        <label for="street">Street</label>
-        <input id="street" type="text" readonly>
+        <label for="region">Region</label>
+        <input id="region" type="text" readonly>
     </div>
 
     <div class="form-group">
@@ -46,91 +53,62 @@
     </div>
 
     <div class="form-group">
-        <label for="city">City</label>
-        <input id="city" type="text" readonly>
+        <label for="street">Street</label>
+        <input id="street" type="text" readonly>
     </div>
 
     <div class="form-group">
-        <label for="postal_code">Postal Code</label>
-        <input id="postal_code" type="text" readonly>
+        <label for="building">Building</label>
+        <input id="building" type="text" readonly>
     </div>
 
-    <div class="form-group">
-        <label for="country">Country</label>
-        <input id="country" type="text" readonly>
-    </div>
-
-    <!-- Include the Google Maps JavaScript API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQjEkcF3SE9TDHwENM_2bGaDTpVouUvBY&libraries=places"></script>
     <script>
+        // Initialize Google Places Autocomplete
         function initAutocomplete() {
-            // Input field for search
-            const input = document.getElementById('place_search');
+            const input = document.getElementById('autocomplete');
+            const options = {
+                componentRestrictions: { country: "HK" }, // Restrict to Hong Kong
+                fields: ["address_components", "geometry"], // Get detailed components
+            };
 
-            // Initialize Google Places Autocomplete
-            const autocomplete = new google.maps.places.Autocomplete(input);
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
 
-            // Set fields to retrieve more detailed address components
-            autocomplete.setFields(['address_components', 'formatted_address', 'geometry']);
-
-            // When a place is selected
-            autocomplete.addListener('place_changed', function () {
+            // Add listener for place selection
+            autocomplete.addListener("place_changed", function () {
                 const place = autocomplete.getPlace();
-
-                if (!place.geometry) {
-                    alert("No details available for the selected place.");
+                if (!place.address_components) {
+                    console.error("No address components found!");
                     return;
                 }
 
-                // Extract address components
-                const addressComponents = place.address_components;
-                const componentForm = {
-                    street_number: 'short_name',
-                    route: 'long_name',
-                    locality: 'long_name',
-                    administrative_area_level_2: 'long_name', // District
-                    administrative_area_level_1: 'short_name', // State
-                    country: 'long_name',
-                    postal_code: 'short_name'
-                };
+                // Clear all fields
+                document.getElementById("country").value = '';
+                document.getElementById("region").value = '';
+                document.getElementById("district").value = '';
+                document.getElementById("street").value = '';
+                document.getElementById("building").value = '';
 
-                // Reset all fields
-                document.getElementById('street').value = '';
-                document.getElementById('district').value = '';
-                document.getElementById('city').value = '';
-                document.getElementById('postal_code').value = '';
-                document.getElementById('country').value = '';
+                // Parse address components
+                place.address_components.forEach((component) => {
+                    const types = component.types;
 
-                // Populate the fields
-                addressComponents.forEach((component) => {
-                    const addressType = component.types[0];
-                    if (componentForm[addressType]) {
-                        const val = component[componentForm[addressType]];
-                        switch (addressType) {
-                            case 'street_number':
-                            case 'route':
-                                document.getElementById('street').value += (document.getElementById('street').value ? ' ' : '') + val;
-                                break;
-                            case 'administrative_area_level_2':
-                                document.getElementById('district').value = val;
-                                break;
-                            case 'locality':
-                                document.getElementById('city').value = val;
-                                break;
-                            case 'postal_code':
-                                document.getElementById('postal_code').value = val;
-                                break;
-                            case 'country':
-                                document.getElementById('country').value = val;
-                                break;
-                        }
+                    if (types.includes("country")) {
+                        document.getElementById("country").value = component.long_name;
+                    } else if (types.includes("administrative_area_level_1")) {
+                        document.getElementById("region").value = component.long_name; // E.g., Hong Kong Island
+                    } else if (types.includes("administrative_area_level_2")) {
+                        document.getElementById("district").value = component.long_name; // E.g., Central and Western District
+                    } else if (types.includes("route")) {
+                        document.getElementById("street").value = component.long_name; // E.g., Queen's Road Central
+                    } else if (types.includes("premise") || types.includes("subpremise")) {
+                        document.getElementById("building").value = component.long_name; // E.g., Building Name
                     }
                 });
             });
         }
 
-        // Initialize autocomplete on page load
-        google.maps.event.addDomListener(window, 'load', initAutocomplete);
+        // Initialize when API script loads
+        window.onload = initAutocomplete;
     </script>
 
 </body>

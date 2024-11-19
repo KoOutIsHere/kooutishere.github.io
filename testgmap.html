@@ -53,6 +53,11 @@
     </div>
 
     <div class="form-group">
+        <label for="district2">District2</label>
+        <input id="district2" type="text" readonly>
+    </div>
+    
+    <div class="form-group">
         <label for="street">Street</label>
         <input id="street" type="text" readonly>
     </div>
@@ -63,6 +68,8 @@
     </div>
 
     <script>
+        console.log("Full Address Components:", place.address_components);
+
         // Initialize Google Places Autocomplete
         function initAutocomplete() {
             const input = document.getElementById('autocomplete');
@@ -85,6 +92,7 @@
                 document.getElementById("country").value = '';
                 document.getElementById("region").value = '';
                 document.getElementById("district").value = '';
+                document.getElementById("district2").value = '';
                 document.getElementById("street").value = '';
                 document.getElementById("building").value = '';
 
@@ -98,6 +106,8 @@
                         document.getElementById("region").value = component.long_name; // E.g., Hong Kong Island
                     } else if (types.includes("administrative_area_level_2")) {
                         document.getElementById("district").value = component.long_name; // E.g., Central and Western District use "locality" for "route"
+                    } else if (types.includes("locality")) {
+                        document.getElementById("district2").value = component.long_name; // Alternate type for district
                     } else if (types.includes("route")) {
                         document.getElementById("street").value = component.long_name; // E.g., Queen's Road Central
                     } else if (types.includes("premise") || types.includes("subpremise")) {

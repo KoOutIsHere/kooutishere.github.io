@@ -97,8 +97,8 @@
                     } else if (types.includes("administrative_area_level_1")) {
                         document.getElementById("region").value = component.long_name; // E.g., Hong Kong Island
                     } else if (types.includes("administrative_area_level_2")) {
-                        document.getElementById("district").value = component.long_name; // E.g., Central and Western District
-                    } else if (types.includes("route")) {
+                        document.getElementById("district").value = component.long_name; // E.g., Central and Western District use "locality" for "route"
+                    } else if (types.includes("locality")) {
                         document.getElementById("street").value = component.long_name; // E.g., Queen's Road Central
                     } else if (types.includes("premise") || types.includes("subpremise")) {
                         document.getElementById("building").value = component.long_name; // E.g., Building Name

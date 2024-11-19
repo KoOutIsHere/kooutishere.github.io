@@ -53,12 +53,12 @@
     </div>
 
     <div class="form-group">
-        <label for="district2">District2</label>
+        <label for="street">Street</label>
         <input id="district2" type="text" readonly>
     </div>
     
     <div class="form-group">
-        <label for="street">Street</label>
+        <label for="streetnum">Street Number</label>
         <input id="street" type="text" readonly>
     </div>
 
@@ -91,8 +91,8 @@
                 document.getElementById("country").value = '';
                 document.getElementById("region").value = '';
                 document.getElementById("district").value = '';
-                document.getElementById("district2").value = '';
                 document.getElementById("street").value = '';
+                document.getElementById("streetnum").value = '';
                 document.getElementById("building").value = '';
 
                 // Parse address components
@@ -103,12 +103,12 @@
                         document.getElementById("country").value = component.long_name;
                     } else if (types.includes("administrative_area_level_1")) {
                         document.getElementById("region").value = component.long_name; // E.g., Hong Kong Island
-                    } else if (types.includes("administrative_area_level_2")) {
+                    } else if (types.includes("neighborhood")) {
                         document.getElementById("district").value = component.long_name; // E.g., Central and Western District use "locality" for "route"
-                    } else if (types.includes("political")) {
-                        document.getElementById("district2").value = component.long_name; // Alternate type for district
                     } else if (types.includes("route")) {
-                        document.getElementById("street").value = component.long_name; // E.g., Queen's Road Central
+                        document.getElementById("street").value = component.long_name; // Alternate type for district
+                    } else if (types.includes("street_number")) {
+                        document.getElementById("streetnum").value = component.long_name; // E.g., Queen's Road Central
                     } else if (types.includes("premise") || types.includes("subpremise")) {
                         document.getElementById("building").value = component.long_name; // E.g., Building Name
                     }

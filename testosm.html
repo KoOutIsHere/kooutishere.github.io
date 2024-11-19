@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenStreetMap Address Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Search Address Using OpenStreetMap</h2>
+    <p>Enter an address, building, or place name to auto-fill the details below:</p>
+
+    <!-- Search Input -->
+    <div class="form-group">
+        <label for="place_search">Search</label>
+        <input id="place_search" type="text" placeholder="Type to search...">
+    </div>
+
+    <!-- Address Breakdown -->
+    <div class="form-group">
+        <label for="street">Street</label>
+        <input id="street" type="text" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="city">City</label>
+        <input id="city" type="text" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="state">State</label>
+        <input id="state" type="text" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="postal_code">Postal Code</label>
+        <input id="postal_code" type="text" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="country">Country</label>
+        <input id="country" type="text" readonly>
+    </div>
+
+    <!-- Include OpenStreetMap Script -->
+    <script>
+        const input = document.getElementById('place_search');
+
+        // Handle input changes and fetch suggestions
+        input.addEventListener('input', function () {
+            const query = input.value;
+
+            // Use Nominatim API for search
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const place = data[0];
+
+                        // Log the entire response for debugging
+                        console.log("Selected Place Details:", place);
+
+                        // Populate fields based on the selected place
+                        const address = place.address || {};
+
+                        document.getElementById('street').value = address.road || '';
+                        document.getElementById('city').value = address.city || address.town || address.village || '';
+                        document.getElementById('state').value = address.state || '';
+                        document.getElementById('postal_code').value = address.postcode || '';
+                        document.getElementById('country').value = address.country || '';
+                    } else {
+                        // Clear fields if no result
+                        document.getElementById('street').value = '';
+                        document.getElementById('city').value = '';
+                        document.getElementById('state').value = '';
+                        document.getElementById('postal_code').value = '';
+                        document.getElementById('country').value = '';
+                    }
+                })
+                .catch(error => console.error("Error fetching data from Nominatim:", error));
+        });
+    </script>
+
+</body>
+</html>

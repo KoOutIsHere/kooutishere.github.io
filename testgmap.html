@@ -105,7 +105,7 @@
                         document.getElementById("region").value = component.long_name; // E.g., Hong Kong Island
                     } else if (types.includes("administrative_area_level_2")) {
                         document.getElementById("district").value = component.long_name; // E.g., Central and Western District use "locality" for "route"
-                    } else if (types.includes("locality")) {
+                    } else if (types.includes("political")) {
                         document.getElementById("district2").value = component.long_name; // Alternate type for district
                     } else if (types.includes("route")) {
                         document.getElementById("street").value = component.long_name; // E.g., Queen's Road Central
@@ -118,7 +118,6 @@
 
         // Initialize when API script loads
         window.onload = initAutocomplete;
-        console.log("Full Address Components:", place.address_components);
     </script>
 
 </body>

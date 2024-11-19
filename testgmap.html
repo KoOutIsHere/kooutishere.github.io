@@ -68,8 +68,7 @@
     </div>
 
     <script>
-        console.log("Full Address Components:", place.address_components);
-
+        
         // Initialize Google Places Autocomplete
         function initAutocomplete() {
             const input = document.getElementById('autocomplete');
@@ -119,6 +118,7 @@
 
         // Initialize when API script loads
         window.onload = initAutocomplete;
+        console.log("Full Address Components:", place.address_components);
     </script>
 
 </body>

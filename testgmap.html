@@ -103,7 +103,7 @@
                         document.getElementById("country").value = component.long_name;
                     } else if (types.includes("administrative_area_level_1")) {
                         document.getElementById("region").value = component.long_name; // E.g., Hong Kong Island
-                    } else if (types.includes("neigborhood")) {
+                    } else if (types.includes("neighborhood")) {
                         document.getElementById("district").value = component.long_name; // E.g., Central and Western District use "locality" for "route"
                     } else if (types.includes("route")) {
                         document.getElementById("street").value = component.long_name; // Alternate type for district

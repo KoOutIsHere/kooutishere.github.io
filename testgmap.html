@@ -54,12 +54,12 @@
 
     <div class="form-group">
         <label for="street">Street</label>
-        <input id="district2" type="text" readonly>
+        <input id="street" type="text" readonly>
     </div>
     
     <div class="form-group">
         <label for="streetnum">Street Number</label>
-        <input id="street" type="text" readonly>
+        <input id="streetnum" type="text" readonly>
     </div>
 
     <div class="form-group">
@@ -103,11 +103,11 @@
                         document.getElementById("country").value = component.long_name;
                     } else if (types.includes("administrative_area_level_1")) {
                         document.getElementById("region").value = component.long_name; // E.g., Hong Kong Island
-                    } else if (types.includes("administrative_area_level_2")) {
+                    } else if (types.includes("neigborhood")) {
                         document.getElementById("district").value = component.long_name; // E.g., Central and Western District use "locality" for "route"
-                    } else if (types.includes("neighborhood")) {
-                        document.getElementById("street").value = component.long_name; // Alternate type for district
                     } else if (types.includes("route")) {
+                        document.getElementById("street").value = component.long_name; // Alternate type for district
+                    } else if (types.includes("street_number")) {
                         document.getElementById("streetnum").value = component.long_name; // E.g., Queen's Road Central
                     } else if (types.includes("premise") || types.includes("subpremise")) {
                         document.getElementById("building").value = component.long_name; // E.g., Building Name

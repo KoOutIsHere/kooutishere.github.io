@@ -1,0 +1,86 @@
+<form method="post" action="/cart/add">
+  <!-- Product ID -->
+  <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+
+  <!-- Speaking Language -->
+  <label for="speaking_language">Preferred Speaking Language</label>
+  <select id="speaking_language" name="properties[Speaking Language]" required>
+    <option value="" disabled selected>Select your language</option>
+    <option value="English">English</option>
+    <option value="Spanish">Spanish</option>
+    <option value="French">French</option>
+    <option value="German">German</option>
+    <option value="Chinese">Chinese</option>
+    <option value="Japanese">Japanese</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <!-- Booking Date -->
+  <label for="booking_date">Booking Date</label>
+  <input type="date" id="booking_date" name="properties[Booking Date]" required>
+
+  <!-- Booking Time -->
+  <label for="booking_time">Booking Time</label>
+  <input type="time" id="booking_time" name="properties[Booking Time]" required>
+
+  <!-- Number of Passengers -->
+  <label for="number_of_passengers">Number of Passengers</label>
+  <input type="number" id="number_of_passengers" name="properties[Number of Passengers]" min="1" max="100" required>
+
+  <!-- Pickup or Dropoff Location -->
+  <label for="location">Pickup or Dropoff Location</label>
+  <input type="text" id="location" placeholder="Enter a location" required>
+  <input type="hidden" id="district" name="properties[District]">
+
+  <!-- Contact Person -->
+  <label for="first_name">First Name</label>
+  <input type="text" id="first_name" name="properties[First Name]" required>
+  
+  <label for="last_name">Last Name</label>
+  <input type="text" id="last_name" name="properties[Last Name]" required>
+
+  <!-- IM App -->
+  <label for="im_app">IM App</label>
+  <select id="im_app" name="properties[IM App]" required>
+    <option value="" disabled selected>Select your IM App</option>
+    <option value="WhatsApp">WhatsApp</option>
+    <option value="Line">Line</option>
+    <option value="WeChat">WeChat</option>
+    <option value="Viber">Viber</option>
+    <option value="Kakao">Kakao</option>
+  </select>
+
+  <!-- Remark -->
+  <label for="remark">Remark</label>
+  <textarea id="remark" name="properties[Remark]" placeholder="Enter additional details here..." rows="4"></textarea>
+
+  <!-- Submit Button -->
+  <button type="submit">Add to Cart</button>
+</form>
+
+<!-- Load Google Places API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places"></script>
+<script>
+  // Initialize Google Places Autocomplete
+  function initializeAutocomplete() {
+    const locationInput = document.getElementById('location');
+    const autocomplete = new google.maps.places.Autocomplete(locationInput);
+
+    autocomplete.addListener('place_changed', function () {
+      const place = autocomplete.getPlace();
+      const districtField = document.getElementById('district');
+
+      // Extract district from the place object
+      const addressComponents = place.address_components || [];
+      const district = addressComponents.find(component =>
+        component.types.includes('administrative_area_level_2')
+      );
+
+      // Set the district value
+      districtField.value = district ? district.long_name : '';
+    });
+  }
+
+  // Load the script on page load
+  document.addEventListener('DOMContentLoaded', initializeAutocomplete);
+</script>

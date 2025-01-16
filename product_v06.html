@@ -1,0 +1,149 @@
+<div class="div-productform">
+    <form method="post" action="/cart/add" id="productForm10ap-{{ section.id }}">
+  
+      <!-- Product ID (this is necessary for display line-items) -->
+      <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+      
+      <!-- Service Date -->
+      <div class = "form-group">
+        <label for="serviceDate">{{ 'productForm.serviceDate' | t }}</label>
+        <input type="date" id="serviceDate" name="properties[serviceDate]" required>
+      </div>
+  
+      <!-- Service Time -->
+      <div class = "form-group">
+        <label for="serviceTime">{{ 'productForm.serviceTime' | t }}</label>
+        <input type="time" id="serviceTime" name="properties[serviceTime]" required>
+      </div>
+  
+      <!-- Location Search -->
+      <div class = "form-group">
+        <label for="locationSearch">{{ 'productForm.locationSearch' | t }}</label>
+        <input type="text" id="locationSearch" name="properties[locationSearch]" placeholder="{{ 'productForm.inputALocationToSearch' | t }}">
+      </div>
+        
+      <!-- Destination District -->
+      <div class = "form-group">
+        <label for="destinationDistrict">{{ 'productForm.destinationDistrict' | t }}</label>
+        <input type="text" id="destinationDistrict" name="properties[destinationDistrict]" readonly>
+      </div>
+
+      <!-- Destination Address -->
+      <div class = "form-group">
+        <label for="destinationAddress">{{ 'productForm.destinationAddress' | t }}</label>
+        <input type="text" id="destinationAddress" name="properties[destinationAddress]" readonly>
+      </div >
+  
+      <!-- Preferred Language -->
+      <div class = "form-group">
+        <label for="preferredLanguage">{{ 'productForm.preferredLanguage' | t }}</label>
+        <select id="preferredLanguage" name="properties[preferredLanguage]" required>
+            <option value="English">{{ 'productForm.english' | t }}</option>
+            <option value="Cantonese">{{ 'productForm.cantonese' | t }}</option>
+            <option value="Putonghua">{{ 'productForm.putonghua' | t }}</option>
+        </select>
+      </div>
+  
+      <!-- Customer Last Name -->
+      <div class = "form-group">
+        <label for="customerLastName">{{ 'productForm.lastName' | t }}</label>
+        <input type="text" id="customerLastName" name="properties[customerLastName]" required>
+      </div>
+
+      <!-- Customer First Name -->
+      <div class = "form-group">
+        <label for="customerFirstName">{{ 'productForm.firstName' | t }}</label>
+        <input type="text" id="customerFirstName" name="properties[customerFirstName]" required>
+      </div>
+
+      <!-- Passenger Name -->
+      <div class = "form-group">
+        <label for="passengerName">{{ 'productForm.passengerName' | t }}</label>
+        <input type="text" id="passengerName" name="properties[passengerName]" placeholder="{{ 'productForm.provideIfDifferentFromAbove' | t }}">
+      </div>
+
+      <!-- Mobile Number -->
+      <div class = "form-group">
+        <label for="mobileCountryCode">{{ 'productForm.mobileCountryCode' | t }}</label>
+        <select id="mobileCountryCode" name="properties[mobileCountryCode]" required>
+            <option value="+852">{{ 'productForm.hongKong-852' | t }}</option>
+            <option value="+1">{{ 'productForm.usa-1' | t }}</option>
+            <option value="+61">{{ 'productForm.australia-61' | t }}</option>
+            <option value="+65">{{ 'productForm.singapore-65' | t }}</option>
+            <option value="+86">{{ 'productForm.china-86' | t }}</option>
+            <option value="+86">{{ 'productForm.other-' | t }}</option>
+        </select>
+      </div>
+
+      <div class = "form-group">
+        <label for="mobileNumber">{{ 'productForm.mobileNumber' | t }}</label>
+        <input type="tel" id="mobileNumber" name="properties[mobileNumber]" required>
+      </div>
+
+      <!-- Email Address -->
+      <div class = "form-group">
+        <label for="emailAddress">{{ 'productForm.emailAddress' | t }}</label>
+        <input type="email" id="emailAddress" name="properties[emailAddress]" required>
+      </div>
+
+      <!-- Messenger Apps -->
+      <div class = "form-group">
+        <label>{{ 'productForm.messengerApps' | t }}</label>
+        <div class = "form-group-checkbox">
+            <input type="checkbox" id="messengerWhatsApp" name="properties[messengerApps][]" value="WhatsApp">
+            <label for="messengerWhatsApp">{{ 'productForm.whatsapp' | t }}</label>
+    
+            <input type="checkbox" id="messengerLine" name="properties[messengerApps][]" value="LINE">
+            <label for="messengerLine">{{ 'productForm.line' | t }}</label>
+    
+            <input type="checkbox" id="messengerViber" name="properties[messengerApps][]" value="Viber">
+            <label for="messengerViber">{{ 'productForm.viber' | t }}</label>
+    
+            <input type="checkbox" id="messengerWeChat" name="properties[messengerApps][]" value="WeChat">
+            <label for="messengerWeChat">{{ 'productForm.wechat' | t }}</label>
+    
+            <input type="checkbox" id="messengerKakao" name="properties[messengerApps][]" value="Kakao">
+            <label for="messengerKakao">{{ 'productForm.kakao' | t }}</label>
+        </div>
+      </div>
+  
+      <!-- Remarks -->
+      <div class = "form-group">
+        <label for="remarks">{{ 'productForm.remarks' | t }}</label>
+        <textarea id="remarks" name="properties[remarks]"></textarea>
+      </div>
+
+      <!-- testVariant CarType -->
+      <div class = "form-group">
+        <label for="carType">Car Type</label>
+        <select id="carType" name="properties[carType]" required>
+            <option value="">Select Car Type</option>
+            <option value="Comfort 5-Seater">Comfort 5-Seater</option>
+            <option value="Luxury 7-Seater">Luxury 7-Seater</option>
+        </select>
+      </div>
+	        <!-- testVariant District -->
+      <div class = "form-group">
+        <label for="district">District</label>
+        <select id="district" name="properties[district]" required>
+            <option value="">Select a district</option>
+            <option value="Central">Central</option>
+            <option value="Tsim Sha Shui">Tsim Sha Tsui</option>
+        </select>
+      </div>
+	        <!-- testVariant Additional -->
+      <div class = "form-group">
+        <label for="additional">Additional</label>
+        <select id="additional" name="properties[additional]" required>
+            <option value="">Select an additional item</option>
+            <option value="Name board +$80">Name board +$80</option>
+            <option value="Extra stop +$150">Extra stop +$150</option>
+        </select>
+      </div>
+  
+      <!-- Submit Button -->
+      <div class = "form-group">
+        <button type="submit" form="productForm10ap-{{ section.id }}">{{ 'productForm.submitReservation' | t }}</button>
+      </div>
+    </form>
+  </div>

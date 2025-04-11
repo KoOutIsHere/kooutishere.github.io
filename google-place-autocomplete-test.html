@@ -69,5 +69,26 @@
       });
     });
   </script>
+  <script>
+  window.addEventListener("load", () => {
+    console.log("Page loaded ✅");
+    if (!customElements.get("gmp-placeautocomplete")) {
+      console.warn("🚨 gmp-placeautocomplete is NOT registered");
+    } else {
+      console.log("✅ gmp-placeautocomplete is registered");
+    }
+  });
+
+  customElements.whenDefined("gmp-placeautocomplete").then(() => {
+    const input = document.getElementById("placebox");
+    if (!input) return console.error("Input element not found");
+
+    input.addEventListener("gmp-placeautocomplete:place_changed", (event) => {
+      const place = event.detail;
+      console.log("📍 Place selected", place);
+    });
+  });
+</script>
+
 </body>
 </html>

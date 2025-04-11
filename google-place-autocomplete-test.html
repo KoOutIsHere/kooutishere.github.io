@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Google Place Autocomplete Test</title>
+  <title>Google Place Autocomplete Test (Legacy)</title>
   <style>
     body {
       font-family: sans-serif;
       padding: 2rem;
     }
 
-    gmp-placeautocomplete input[slot="input"] {
+    #location-search {
       width: 100%;
       padding: 12px;
       border-radius: 6px;
@@ -21,74 +21,87 @@
       margin-top: 1rem;
       padding: 1rem;
       border: 1px dashed #ccc;
-      background-color: #f8f8f8;
+      background-color: #f9f9f9;
     }
   </style>
 </head>
 <body>
 
-  <h1>Test: Google Place Autocomplete (gmp-placeautocomplete)</h1>
+  <h1>Test: Google Place Autocomplete (Legacy)</h1>
 
-  <gmp-placeautocomplete id="placebox">
-    <input
-      type="text"
-      slot="input"
-      placeholder="Enter a location in Hong Kong" />
-  </gmp-placeautocomplete>
+  <input
+    id="location-search"
+    type="text"
+    placeholder="Enter a location in Hong Kong" />
 
   <div class="output" id="output">
     <strong>Parsed Result:</strong>
     <pre id="parsed"></pre>
   </div>
 
-  <!-- ✅ Load Google Maps API with v=beta -->
+  <!-- ✅ Load Google Maps JS (Stable version) -->
   <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQjEkcF3SE9TDHwENM_2bGaDTpVouUvBY&libraries=places&v=beta&language=zh-HK&region=HK"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDB7-H89xdsfu5V0Vd6jr7mGvgg_PXrhzU&libraries=places&region=HK&language=zh-HK"
     async defer></script>
 
   <script>
-    customElements.whenDefined("gmp-placeautocomplete").then(() => {
-      const input = document.getElementById("placebox");
+    function getAddressComponent(components, types) {
+      const comp = components.find((c) => c.types.some((t) => types.includes(t)));
+      return comp ? comp.long_name : "";
+    }
 
-      input.addEventListener("gmp-placeautocomplete:place_changed", (event) => {
-        const place = event.detail;
-        const parsed = {
+    function detectHKDistrict(components) {
+      const keywords = {
+        "Hong Kong Island": ["Central", "Admiralty", "Wan Chai", "Causeway Bay", "Sheung Wan", "Sai Wan", "Chai Wan", "Aberdeen"],
+        "Kowloon": ["Mong Kok", "Tsim Sha Tsui", "Jordan", "Yau Ma Tei", "Ho Man Tin", "Hung Hom", "San Po Kong", "Kowloon City", "Sham Shui Po", "Prince Edward", "Cheung Sha Wan"],
+        "New Territories": ["Sha Tin", "Tsuen Wan", "Tuen Mun", "Yuen Long", "Fanling", "Sheung Shui", "Tai Po", "Sai Kung", "Ma On Shan", "Tin Shui Wai"]
+      };
+      const found = components.map(c => c.long_name).join(", ");
+      for (const [district, areas] of Object.entries(keywords)) {
+        if (areas.some(area => found.includes(area))) return district;
+      }
+      return "";
+    }
+
+    function formatAddressLine(place) {
+      const name = place.name || "";
+      const street = getAddressComponent(place.address_components, ["route"]);
+      const number = getAddressComponent(place.address_components, ["street_number"]);
+      return [name, number, street].filter(Boolean).join(", ");
+    }
+
+    function initAutocomplete() {
+      const input = document.getElementById("location-search");
+      const output = document.getElementById("parsed");
+
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        componentRestrictions: { country: "hk" },
+        fields: ["address_components", "name", "formatted_address"]
+      });
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        console.log("📍 Legacy Autocomplete selected:", place);
+
+        const result = {
           name: place.name || "(none)",
           address: place.formatted_address || "(none)",
-          components: {}
+          district: detectHKDistrict(place.address_components),
+          subDistrict: getAddressComponent(place.address_components, ["sublocality_level_1", "neighborhood"]),
+          addressLine: formatAddressLine(place),
         };
 
-        if (place.address_components) {
-          place.address_components.forEach(component => {
-            parsed.components[component.types[0]] = component.long_name;
-          });
-        }
-
-        document.getElementById("parsed").textContent = JSON.stringify(parsed, null, 2);
-        console.log("📍 Place selected", place);
+        output.textContent = JSON.stringify(result, null, 2);
       });
+    }
+
+    window.addEventListener("load", () => {
+      if (typeof google !== "undefined" && google.maps && google.maps.places) {
+        initAutocomplete();
+      } else {
+        console.error("❌ Google Maps API did not load. Check your API key and internet connection.");
+      }
     });
   </script>
-  <script>
-  window.addEventListener("load", () => {
-    console.log("Page loaded ✅");
-    if (!customElements.get("gmp-placeautocomplete")) {
-      console.warn("🚨 gmp-placeautocomplete is NOT registered");
-    } else {
-      console.log("✅ gmp-placeautocomplete is registered");
-    }
-  });
-
-  customElements.whenDefined("gmp-placeautocomplete").then(() => {
-    const input = document.getElementById("placebox");
-    if (!input) return console.error("Input element not found");
-
-    input.addEventListener("gmp-placeautocomplete:place_changed", (event) => {
-      const place = event.detail;
-      console.log("📍 Place selected", place);
-    });
-  });
-</script>
-
 </body>
 </html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Place Autocomplete Test</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+
+    gmp-placeautocomplete input[slot="input"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    .output {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px dashed #ccc;
+      background-color: #f8f8f8;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Test: Google Place Autocomplete (gmp-placeautocomplete)</h1>
+
+  <gmp-placeautocomplete id="placebox">
+    <input
+      type="text"
+      slot="input"
+      placeholder="Enter a location in Hong Kong" />
+  </gmp-placeautocomplete>
+
+  <div class="output" id="output">
+    <strong>Parsed Result:</strong>
+    <pre id="parsed"></pre>
+  </div>
+
+  <!-- ✅ Load Google Maps API with v=beta -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDB7-H89xdsfu5V0Vd6jr7mGvgg_PXrhzU&libraries=places&v=beta&language=zh-HK&region=HK"
+    async defer></script>
+
+  <script>
+    customElements.whenDefined("gmp-placeautocomplete").then(() => {
+      const input = document.getElementById("placebox");
+
+      input.addEventListener("gmp-placeautocomplete:place_changed", (event) => {
+        const place = event.detail;
+        const parsed = {
+          name: place.name || "(none)",
+          address: place.formatted_address || "(none)",
+          components: {}
+        };
+
+        if (place.address_components) {
+          place.address_components.forEach(component => {
+            parsed.components[component.types[0]] = component.long_name;
+          });
+        }
+
+        document.getElementById("parsed").textContent = JSON.stringify(parsed, null, 2);
+        console.log("📍 Place selected", place);
+      });
+    });
+  </script>
+</body>
+</html>
